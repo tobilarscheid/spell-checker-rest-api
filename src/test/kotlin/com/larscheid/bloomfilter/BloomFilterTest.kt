@@ -27,6 +27,17 @@ internal class BloomFilterTest {
     }
 
     @Test
+    fun shouldHandleNegativeHashes() {//negative hashes are returned by kotlin's String.hashCode and are valid values
+        //given an array full of 0s and a hash function that returns a negative hash
+        val bitArray = arrayOf(false, false)
+        val filter = BloomFilter(bitArray) { _ -> -1}
+        //when I add any word
+        filter.add("any-word")
+        //then the hash should be taken as absolute value (abs(-1) = 1)
+        assertArrayEquals(bitArray, arrayOf(false, true))
+    }
+
+    @Test
     fun shouldHandleCollisionsWhenAdding() {
         //given an array full of 0s and a hash function that always returns 1
         val bitArray = arrayOf(false, false)
