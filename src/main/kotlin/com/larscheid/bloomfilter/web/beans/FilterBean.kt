@@ -19,9 +19,11 @@ import org.springframework.stereotype.Component
  */
 @Component
 class FilterBean (@Value("\${size}") size: Int, @Value("\${algorithm}") algorithm: String) {
-    val filter: BloomFilter = BloomFilter(Array(size * 1000, init = { _ -> false }), hashForName(algorithm))
+    val filter: BloomFilter = BloomFilter(Array(size.kbToBit(), init = { _ -> false }), hashForName(algorithm))
 
     init {
         ClassPathResource("wordlist.txt").inputStream.bufferedReader().use { it.readLines().forEach{ word -> filter.add(word)} }
     }
+
+    private fun Int.kbToBit() : Int = this * 1024
 }
